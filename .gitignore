@@ -1,0 +1,6 @@
+/build/
+/dist/
+/nbproject/private/
+/target
+OpenAL64.dll
+lwjgl64.dll
