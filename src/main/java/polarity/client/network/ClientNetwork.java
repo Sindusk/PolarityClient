@@ -26,9 +26,9 @@ import network.GameNetwork;
 import network.NetData;
 import network.ServerStatus;
 import polarity.client.main.GameClient;
-import screens.GameScreen;
-import screens.MenuScreen;
-import screens.MultiplayerScreen;
+import polarity.client.screens.GameScreen;
+import polarity.client.screens.MenuScreen;
+import polarity.client.screens.MultiplayerScreen;
 import screens.Screen;
 import spellforge.SpellMatrix;
 import spellforge.nodes.GeneratorData;
@@ -43,6 +43,7 @@ import java.util.concurrent.Callable;
  * @author SinisteRing
  */
 public class ClientNetwork extends GameNetwork {
+    public static ClientNetwork Instance = null;
     // Important variables:
     private ClientListener listener = new ClientListener();
     protected final GameClient app;
@@ -73,6 +74,7 @@ public class ClientNetwork extends GameNetwork {
         Util.log("[ClientNetwork] <Initialize> Initializing ClientNetwork...", 2);
         this.app = app;
         this.charManager = app.getCharManager();
+        Instance = this; // Set the ClientNetwork instance.
     }
     
     // Attempted connection, will fail if the server is not available.

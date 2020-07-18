@@ -19,7 +19,7 @@ import items.creation.ItemFactory;
 import items.data.SpellNodeItemData;
 import main.GameApplication;
 import netdata.updates.MatrixUpdate;
-import screens.GameScreen;
+import polarity.client.network.ClientNetwork;
 import screens.Screen;
 import spellforge.SpellMatrix;
 import spellforge.nodes.SpellNode;
@@ -285,7 +285,7 @@ public class SpellForgeScreen extends Screen {
                 if(button.getItem().getData() instanceof SpellNodeItemData){
                     SpellNodeItemData item = (SpellNodeItemData) button.getItem().getData();
                     SpellNodeData data = item.getData().cleanData(spellNode.getData());
-                    clientNetwork.send(new MatrixUpdate(gameScreen.getPlayer().getID(), matrixIndex, data));
+                    ClientNetwork.Instance.send(new MatrixUpdate(gameScreen.getPlayer().getID(), matrixIndex, data));
                     button.getItem().getInventory().remove(item);
                     invPanel.display();
                 }
@@ -315,7 +315,7 @@ public class SpellForgeScreen extends Screen {
                     invPanel.getInventory().add(data.toItem());
                 }
                 PowerConduitData conduit = new PowerConduitData(data);
-                clientNetwork.send(new MatrixUpdate(gameScreen.getPlayer().getID(), matrixIndex, conduit));
+                ClientNetwork.Instance.send(new MatrixUpdate(gameScreen.getPlayer().getID(), matrixIndex, conduit));
                 invPanel.display();
             }
         };
@@ -333,7 +333,7 @@ public class SpellForgeScreen extends Screen {
                     invPanel.getInventory().add(data.toItem());
                 }
                 ModifierConduitData conduit = new ModifierConduitData(data);
-                clientNetwork.send(new MatrixUpdate(gameScreen.getPlayer().getID(), matrixIndex, conduit));
+                ClientNetwork.Instance.send(new MatrixUpdate(gameScreen.getPlayer().getID(), matrixIndex, conduit));
                 spellNode.changeData(conduit);
                 invPanel.display();
             }
@@ -352,7 +352,7 @@ public class SpellForgeScreen extends Screen {
                     invPanel.getInventory().add(data.toItem());
                 }
                 EffectConduitData conduit = new EffectConduitData(data);
-                clientNetwork.send(new MatrixUpdate(gameScreen.getPlayer().getID(), matrixIndex, conduit));
+                ClientNetwork.Instance.send(new MatrixUpdate(gameScreen.getPlayer().getID(), matrixIndex, conduit));
                 spellNode.changeData(conduit);
                 invPanel.display();
             }
@@ -371,7 +371,7 @@ public class SpellForgeScreen extends Screen {
                     invPanel.getInventory().add(data.toItem());
                 }
                 SpellNodeData removal = new SpellNodeData(data.getX(), data.getY(), data.getLocation());
-                clientNetwork.send(new MatrixUpdate(gameScreen.getPlayer().getID(), matrixIndex, removal));
+                ClientNetwork.Instance.send(new MatrixUpdate(gameScreen.getPlayer().getID(), matrixIndex, removal));
                 spellNode.changeData(removal);
                 invPanel.display();
             }

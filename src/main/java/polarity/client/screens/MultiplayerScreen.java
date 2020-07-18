@@ -8,9 +8,8 @@ import com.jme3.scene.Node;
 import input.Bind;
 import input.InputHandler;
 import main.GameApplication;
-import screens.MenuScreen;
+import polarity.client.network.ClientNetwork;
 import screens.Screen;
-import screens.ServerEntryScreen;
 import tools.Sys;
 import tools.Util;
 import ui.Button;
@@ -44,7 +43,7 @@ public class MultiplayerScreen extends Screen {
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Bind.LClick.toString()) && down){
-                    clientNetwork.connect("127.0.0.1");
+                    ClientNetwork.Instance.connect("127.0.0.1");
                 }
             }
         };
@@ -57,7 +56,7 @@ public class MultiplayerScreen extends Screen {
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Bind.LClick.toString()) && down){
-                    clientNetwork.connect("192.95.31.54");
+                    ClientNetwork.Instance.connect("192.95.31.54");
                 }
             }
         };

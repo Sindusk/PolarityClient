@@ -4,7 +4,7 @@ import com.jme3.system.AppSettings;
 import input.ClientInputHandler;
 import main.GameApplication;
 import polarity.client.network.ClientNetwork;
-import screens.MenuScreen;
+import polarity.client.screens.MenuScreen;
 import screens.Screen;
 import tools.Sys;
 import tools.Util;
@@ -44,12 +44,13 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class GameClient extends GameApplication {
+    protected static GameClient Instance = null;
     protected ClientInputHandler inputHandler;
     protected ClientNetwork clientNetwork;
     
     public static void main(String[] args) throws InterruptedException{
-        main.GameClient app = new main.GameClient();
-        app.start();
+        Instance = new GameClient();
+        Instance.start();
     }
     
     public ClientNetwork getNetwork(){
@@ -96,7 +97,6 @@ public class GameClient extends GameApplication {
         Sys.setNetwork(clientNetwork);
         
         // Initialize Screen static vars
-        Screen.setClientNetwork(clientNetwork);
         Screen.setNodes(root, gui);
         
         inputHandler.switchScreens(new MenuScreen(this, root, gui));

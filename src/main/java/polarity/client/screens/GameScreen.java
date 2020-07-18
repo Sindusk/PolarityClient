@@ -11,15 +11,16 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import entity.Entity;
 import files.ChunkFileManager;
-import hud.advanced.*;
+import hud.advanced.FPSCounter;
+import polarity.client.hud.advanced.*;
 import input.Bind;
 import input.InputHandler;
 import main.GameApplication;
 import netdata.ChatMessage;
 import netdata.requests.SpellMatrixRequest;
 import netdata.testing.MonsterCreateData;
+import polarity.client.network.ClientNetwork;
 import screens.Screen;
-import screens.SpellForgeScreen;
 import spellforge.SpellMatrix;
 import tools.GeoFactory;
 import tools.Sys;
@@ -58,7 +59,7 @@ public class GameScreen extends Screen {
         super(app, rootNode, guiNode);
         gameMenu = new GameMenu(gui, new Vector2f(Sys.width*0.5f, Sys.height*0.5f), 2);
         charManager = app.getCharManager();
-        playerID = clientNetwork.getID();
+        playerID = ClientNetwork.Instance.getID();
         charManager.setMyID(playerID);
         name="Game Screen";
     }
@@ -120,7 +121,7 @@ public class GameScreen extends Screen {
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Bind.LClick.toString()) && down){
-                    clientNetwork.send(new SpellMatrixRequest(playerID));
+                    ClientNetwork.Instance.send(new SpellMatrixRequest(playerID));
                     inputHandler.changeScreens(spellForgeScreen);
                 }
             }
@@ -174,7 +175,7 @@ public class GameScreen extends Screen {
         });
         app.enqueue(new Callable<Void>(){
             public Void call() throws Exception{
-                app.getWorld().checkChunks(getPlayer(), clientNetwork);
+                app.getWorld().checkChunks(getPlayer(), ClientNetwork.Instance);
                 return null;
             }
         });
@@ -192,7 +193,7 @@ public class GameScreen extends Screen {
         }
         
         // Update client network
-        clientNetwork.update(tpf);
+        ClientNetwork.Instance.update(tpf);
         
         // Super call at end so it has latest info
         super.update(tpf);
@@ -251,7 +252,7 @@ public class GameScreen extends Screen {
                 String message = chatBox.getNewMessage();
                 chatBox.endMessage();
                 chatBox.addMessage(getPlayer().getName()+": "+message);
-                clientNetwork.send(new ChatMessage(getPlayer().asOwner(), message));
+                ClientNetwork.Instance.send(new ChatMessage(getPlayer().asOwner(), message));
             }else{
                 chatBox.startNewMessage();
             }
@@ -276,7 +277,7 @@ public class GameScreen extends Screen {
             GeoFactory.toggleWireframe();
         }else if(bind.equals(Bind.N.toString()) && down){
             Vector3f worldLoc = Util.getWorldLoc(cursorLoc, app.getCamera());
-            clientNetwork.send(new MonsterCreateData(new Vector2f(worldLoc.x, worldLoc.y)));
+            ClientNetwork.Instance.send(new MonsterCreateData(new Vector2f(worldLoc.x, worldLoc.y)));
         }else if(bind.equals(Bind.B.toString()) && down){
             getPlayer().updateLocation(inputHandler.getCursorLocWorld());
         }else if(bind.equals(Bind.Y.toString()) && down){

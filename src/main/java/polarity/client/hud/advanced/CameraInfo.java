@@ -4,7 +4,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import hud.HUDElement;
-import screens.GameScreen;
+import polarity.client.screens.GameScreen;
 import tools.SinText;
 import ui.Label;
 
