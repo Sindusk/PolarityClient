@@ -7,9 +7,9 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import hud.HUDElement;
-import tools.GeoFactory;
-import tools.SinText;
+import polarity.shared.hud.HUDElement;
+import polarity.shared.tools.GeoFactory;
+import polarity.shared.tools.SinText;
 
 import java.util.ArrayList;
 

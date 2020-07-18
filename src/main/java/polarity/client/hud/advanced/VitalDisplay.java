@@ -1,15 +1,15 @@
 package polarity.client.hud.advanced;
 
-import character.Player;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
-import hud.DynamicBar;
-import hud.HUDElement;
-import stats.advanced.Resources;
-import stats.advanced.Vitals;
-import tools.Sys;
-import ui.Label;
+import polarity.shared.character.Player;
+import polarity.shared.hud.DynamicBar;
+import polarity.shared.hud.HUDElement;
+import polarity.shared.stats.advanced.Resources;
+import polarity.shared.stats.advanced.Vitals;
+import polarity.shared.tools.Sys;
+import polarity.shared.ui.Label;
 
 /**
  *

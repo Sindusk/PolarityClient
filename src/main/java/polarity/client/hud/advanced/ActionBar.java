@@ -1,15 +1,15 @@
 package polarity.client.hud.advanced;
 
-import character.Player;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import hud.HUDElement;
-import tools.GeoFactory;
-import tools.SinText;
-import ui.Button;
+import polarity.shared.character.Player;
+import polarity.shared.hud.HUDElement;
+import polarity.shared.tools.GeoFactory;
+import polarity.shared.tools.SinText;
+import polarity.shared.ui.Button;
 
 /**
  *

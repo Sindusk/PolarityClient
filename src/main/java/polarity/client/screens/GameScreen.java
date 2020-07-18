@@ -1,34 +1,35 @@
 package polarity.client.screens;
 
-import ai.pathfinding.AStarPathFinder;
-import ai.pathfinding.Path;
-import character.CharacterManager;
-import character.Player;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import entity.Entity;
-import files.ChunkFileManager;
-import hud.advanced.FPSCounter;
 import polarity.client.hud.advanced.*;
-import input.Bind;
-import input.InputHandler;
-import main.GameApplication;
-import netdata.ChatMessage;
-import netdata.requests.SpellMatrixRequest;
-import netdata.testing.MonsterCreateData;
+import polarity.client.main.GameClient;
 import polarity.client.network.ClientNetwork;
-import screens.Screen;
-import spellforge.SpellMatrix;
-import tools.GeoFactory;
-import tools.Sys;
-import tools.Util;
-import ui.Button;
-import ui.UIElement;
-import ui.advanced.GameMenu;
-import world.Sector;
+import polarity.client.world.ClientWorld;
+import polarity.shared.ai.pathfinding.AStarPathFinder;
+import polarity.shared.ai.pathfinding.Path;
+import polarity.shared.character.CharacterManager;
+import polarity.shared.character.Player;
+import polarity.shared.entity.Entity;
+import polarity.shared.files.ChunkFileManager;
+import polarity.shared.hud.advanced.FPSCounter;
+import polarity.shared.input.Bind;
+import polarity.shared.input.InputHandler;
+import polarity.shared.netdata.ChatMessage;
+import polarity.shared.netdata.requests.SpellMatrixRequest;
+import polarity.shared.netdata.testing.MonsterCreateData;
+import polarity.shared.screens.Screen;
+import polarity.shared.spellforge.SpellMatrix;
+import polarity.shared.tools.GeoFactory;
+import polarity.shared.tools.Sys;
+import polarity.shared.tools.Util;
+import polarity.shared.ui.Button;
+import polarity.shared.ui.UIElement;
+import polarity.shared.ui.advanced.GameMenu;
+import polarity.shared.world.Sector;
 
 import java.util.concurrent.Callable;
 
@@ -55,7 +56,7 @@ public class GameScreen extends Screen {
     // Movement testing
     protected int playerID;
     
-    public GameScreen(GameApplication app, Node rootNode, Node guiNode){
+    public GameScreen(GameClient app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
         gameMenu = new GameMenu(gui, new Vector2f(Sys.width*0.5f, Sys.height*0.5f), 2);
         charManager = app.getCharManager();
@@ -83,14 +84,15 @@ public class GameScreen extends Screen {
             app.getCamera().setLocation(new Vector3f(tempVect.x, tempVect.y, 50));
         }
     }
-    
+
+    @Override
     public void initialize(final InputHandler inputHandler) {
         this.inputHandler = inputHandler;
         
         // Add HUD elements
         fpsCounter = new FPSCounter(gui, new Vector2f(10, Sys.height-15), 15);
         hud.add(fpsCounter);
-        locator = new Locator(gui, new Vector2f(10, Sys.height-35), 15, app.getWorld(), getPlayer());
+        locator = new Locator(gui, new Vector2f(10, Sys.height-35), 15, (ClientWorld)app.getWorld(), getPlayer());
         hud.add(locator);
         cameraInfo = new CameraInfo(gui, new Vector2f(10, Sys.height-95), 15, this);
         hud.add(cameraInfo);
@@ -145,7 +147,7 @@ public class GameScreen extends Screen {
         gameMenu.addOption(ui, exitButton);
         ui.remove(exitButton);
         
-        spellForgeScreen = new SpellForgeScreen(app, this, Screen.getTopRoot(), Screen.getTopGUI());
+        spellForgeScreen = new SpellForgeScreen((GameClient)app, this, Screen.getTopRoot(), Screen.getTopGUI());
         spellForgeScreen.initialize(inputHandler);
         spellForgeScreen.setVisible(false);
         

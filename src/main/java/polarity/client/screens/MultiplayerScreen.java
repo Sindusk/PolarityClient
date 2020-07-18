@@ -5,15 +5,15 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import input.Bind;
-import input.InputHandler;
-import main.GameApplication;
+import polarity.client.main.GameClient;
 import polarity.client.network.ClientNetwork;
-import screens.Screen;
-import tools.Sys;
-import tools.Util;
-import ui.Button;
-import ui.UIElement;
+import polarity.shared.input.Bind;
+import polarity.shared.input.InputHandler;
+import polarity.shared.screens.Screen;
+import polarity.shared.tools.Sys;
+import polarity.shared.tools.Util;
+import polarity.shared.ui.Button;
+import polarity.shared.ui.UIElement;
 
 /**
  *
@@ -24,7 +24,7 @@ public class MultiplayerScreen extends Screen {
     private Button serverButton;
     private Button addServerButton;
     
-    public MultiplayerScreen(GameApplication app, Node rootNode, Node guiNode){
+    public MultiplayerScreen(GameClient app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
         name="Multiplayer Screen";
     }
@@ -68,7 +68,7 @@ public class MultiplayerScreen extends Screen {
             @Override
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 if(bind.equals(Bind.LClick.toString()) && down){
-                    inputHandler.switchScreens(new ServerEntryScreen(app, root.getParent(), gui.getParent()));
+                    inputHandler.switchScreens(new ServerEntryScreen((GameClient)app, root.getParent(), gui.getParent()));
                 }
             }
         };
@@ -103,7 +103,7 @@ public class MultiplayerScreen extends Screen {
         
         // Default bind back to menu screen
         if(bind.equals(Bind.Escape.toString())){
-            inputHandler.switchScreens(new MenuScreen(app, root.getParent(), gui.getParent()));
+            inputHandler.switchScreens(new MenuScreen((GameClient)app, root.getParent(), gui.getParent()));
         }
     }
     

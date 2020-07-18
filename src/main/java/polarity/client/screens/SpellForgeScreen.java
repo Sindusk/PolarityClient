@@ -1,44 +1,44 @@
 package polarity.client.screens;
 
-import character.Player;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import equipment.AccessoryData;
-import equipment.ArmorData;
-import equipment.EquipmentData;
-import equipment.WeaponData;
-import hud.Tooltip;
-import hud.advanced.FPSCounter;
-import input.Bind;
-import input.InputHandler;
-import items.Inventory;
-import items.creation.ItemFactory;
-import items.data.SpellNodeItemData;
-import main.GameApplication;
-import netdata.updates.MatrixUpdate;
+import polarity.client.main.GameClient;
 import polarity.client.network.ClientNetwork;
-import screens.Screen;
-import spellforge.SpellMatrix;
-import spellforge.nodes.SpellNode;
-import spellforge.nodes.SpellNodeData;
-import spellforge.nodes.conduits.EffectConduitData;
-import spellforge.nodes.conduits.ModifierConduitData;
-import spellforge.nodes.conduits.PowerConduitData;
-import tools.Sys;
-import tools.Util;
-import tools.Vector2i;
-import ui.Button;
-import ui.Menu;
-import ui.UIElement;
-import ui.interfaces.Draggable;
-import ui.interfaces.TooltipInfo;
-import ui.items.EquipmentButton;
-import ui.items.EquipmentPanel;
-import ui.items.InventoryPanel;
-import ui.items.ItemButton;
+import polarity.shared.character.Player;
+import polarity.shared.equipment.AccessoryData;
+import polarity.shared.equipment.ArmorData;
+import polarity.shared.equipment.EquipmentData;
+import polarity.shared.equipment.WeaponData;
+import polarity.shared.hud.Tooltip;
+import polarity.shared.hud.advanced.FPSCounter;
+import polarity.shared.input.Bind;
+import polarity.shared.input.InputHandler;
+import polarity.shared.items.Inventory;
+import polarity.shared.items.creation.ItemFactory;
+import polarity.shared.items.data.SpellNodeItemData;
+import polarity.shared.netdata.updates.MatrixUpdate;
+import polarity.shared.screens.Screen;
+import polarity.shared.spellforge.SpellMatrix;
+import polarity.shared.spellforge.nodes.SpellNode;
+import polarity.shared.spellforge.nodes.SpellNodeData;
+import polarity.shared.spellforge.nodes.conduits.EffectConduitData;
+import polarity.shared.spellforge.nodes.conduits.ModifierConduitData;
+import polarity.shared.spellforge.nodes.conduits.PowerConduitData;
+import polarity.shared.tools.Sys;
+import polarity.shared.tools.Util;
+import polarity.shared.tools.Vector2i;
+import polarity.shared.ui.Button;
+import polarity.shared.ui.Menu;
+import polarity.shared.ui.UIElement;
+import polarity.shared.ui.interfaces.Draggable;
+import polarity.shared.ui.interfaces.TooltipInfo;
+import polarity.shared.ui.items.EquipmentButton;
+import polarity.shared.ui.items.EquipmentPanel;
+import polarity.shared.ui.items.InventoryPanel;
+import polarity.shared.ui.items.ItemButton;
 
 import java.util.concurrent.Callable;
 
@@ -61,7 +61,7 @@ public class SpellForgeScreen extends Screen {
     protected SpellMatrix matrix;
     protected int matrixIndex = 0;
     
-    public SpellForgeScreen(GameApplication app, GameScreen gameScreen, Node root, Node gui){
+    public SpellForgeScreen(GameClient app, GameScreen gameScreen, Node root, Node gui){
         super(app, root, gui);
         this.gameScreen = gameScreen;
         this.player = gameScreen.getPlayer();
@@ -179,7 +179,7 @@ public class SpellForgeScreen extends Screen {
                 // Sift through the controls of the InventoryPanel to find the item the cursor is over
                 InventoryPanel panel = (InventoryPanel) e;
                 e = panel.checkControls(cursorLoc);
-                if(e != null && e instanceof TooltipInfo){
+                if(e instanceof TooltipInfo){
                     // If there's an item, display new tooltip
                     TooltipInfo ttinfo = (TooltipInfo) e;
                     if(!itemTooltip.isVisible()){

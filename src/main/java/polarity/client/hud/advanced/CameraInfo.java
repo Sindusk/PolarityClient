@@ -3,10 +3,10 @@ package polarity.client.hud.advanced;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
-import hud.HUDElement;
 import polarity.client.screens.GameScreen;
-import tools.SinText;
-import ui.Label;
+import polarity.shared.hud.HUDElement;
+import polarity.shared.tools.SinText;
+import polarity.shared.ui.Label;
 
 /**
  *

@@ -1,24 +1,24 @@
 package polarity.client.screens;
 
-import character.Player;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
-import hud.Tooltip;
-import hud.advanced.FPSCounter;
-import input.Bind;
-import input.InputHandler;
-import main.GameApplication;
-import screens.Screen;
-import tools.Sys;
-import tools.Vector2i;
-import ui.UIElement;
-import ui.interfaces.Draggable;
-import ui.interfaces.TooltipInfo;
-import ui.items.EquipmentPanel;
-import ui.items.InventoryPanel;
-import ui.items.ItemButton;
+import polarity.client.main.GameClient;
+import polarity.shared.character.Player;
+import polarity.shared.hud.Tooltip;
+import polarity.shared.hud.advanced.FPSCounter;
+import polarity.shared.input.Bind;
+import polarity.shared.input.InputHandler;
+import polarity.shared.screens.Screen;
+import polarity.shared.tools.Sys;
+import polarity.shared.tools.Vector2i;
+import polarity.shared.ui.UIElement;
+import polarity.shared.ui.interfaces.Draggable;
+import polarity.shared.ui.interfaces.TooltipInfo;
+import polarity.shared.ui.items.EquipmentPanel;
+import polarity.shared.ui.items.InventoryPanel;
+import polarity.shared.ui.items.ItemButton;
 
 /**
  *
@@ -33,13 +33,14 @@ public class InventoryScreen extends Screen {
     protected Draggable dragging;
     protected Tooltip itemTooltip;
     
-    public InventoryScreen(GameApplication app, GameScreen gameScreen, Node rootNode, Node guiNode){
+    public InventoryScreen(GameClient app, GameScreen gameScreen, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
         this.gameScreen = gameScreen;
         this.player = gameScreen.getPlayer();
         this.name = "Inventory Screen";
     }
-    
+
+    @Override
     public void initialize(final InputHandler inputHandler){
         this.inputHandler = inputHandler;
         
@@ -82,7 +83,7 @@ public class InventoryScreen extends Screen {
                 // Sift through the controls of the InventoryPanel to find the item the cursor is over
                 InventoryPanel panel = (InventoryPanel) e;
                 e = panel.checkControls(cursorLoc);
-                if(e != null && e instanceof TooltipInfo){
+                if(e instanceof TooltipInfo){
                     // If there's an item, display new tooltip
                     TooltipInfo ttinfo = (TooltipInfo) e;
                     if(!itemTooltip.isVisible()){
@@ -114,14 +115,14 @@ public class InventoryScreen extends Screen {
             if(e instanceof InventoryPanel){
                 InventoryPanel panel = (InventoryPanel) e;
                 e = panel.checkControls(cursorLoc);
-                if(e != null && e instanceof Draggable && down && bind.equals(Bind.LClick.toString())){
+                if(e instanceof Draggable && down && bind.equals(Bind.LClick.toString())){
                     dragging = (Draggable) e;
                 }
             }else if(e instanceof EquipmentPanel){
                 if(dragging == null){
                     EquipmentPanel panel = (EquipmentPanel) e;
                     e = panel.checkControls(cursorLoc);
-                    if(e != null && e instanceof Draggable && down && bind.equals(Bind.LClick.toString())){
+                    if(e instanceof Draggable && down && bind.equals(Bind.LClick.toString())){
                         dragging = (Draggable) e;
                     }
                 }else if(!down && bind.equals(Bind.LClick.toString()) && dragging instanceof ItemButton){

@@ -4,14 +4,14 @@ import com.jme3.input.event.KeyInputEvent;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
-import input.Bind;
-import input.InputHandler;
-import main.GameApplication;
-import screens.Screen;
-import tools.Sys;
-import tools.Util;
-import ui.Button;
-import ui.UIElement;
+import polarity.client.main.GameClient;
+import polarity.shared.input.Bind;
+import polarity.shared.input.InputHandler;
+import polarity.shared.screens.Screen;
+import polarity.shared.tools.Sys;
+import polarity.shared.tools.Util;
+import polarity.shared.ui.Button;
+import polarity.shared.ui.UIElement;
 
 /**
  *
@@ -21,7 +21,7 @@ public class ServerEntryScreen extends Screen {
     protected Button addButton;
     protected Button backButton;
     
-    public ServerEntryScreen(GameApplication app, Node rootNode, Node guiNode){
+    public ServerEntryScreen(GameClient app, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
         name = "ServerEntryScreen";
     }
@@ -51,7 +51,7 @@ public class ServerEntryScreen extends Screen {
             public void onAction(Vector2f cursorLoc, String bind, boolean down, float tpf){
                 //Click mouse goes back
                 if(bind.equals(Bind.LClick.toString()) && down){
-                    inputHandler.switchScreens(new MultiplayerScreen(app, root.getParent(), gui.getParent()));
+                    inputHandler.switchScreens(new MultiplayerScreen((GameClient)app, root.getParent(), gui.getParent()));
                 }
             }
         };
@@ -85,7 +85,7 @@ public class ServerEntryScreen extends Screen {
         
         // Default bind back to menu screen
         if(bind.equals(Bind.Escape.toString())){
-            inputHandler.switchScreens(new MenuScreen(app, root.getParent(), gui.getParent()));
+            inputHandler.switchScreens(new MenuScreen((GameClient)app, root.getParent(), gui.getParent()));
         }
     }
 

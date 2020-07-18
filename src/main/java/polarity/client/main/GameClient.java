@@ -1,13 +1,14 @@
 package polarity.client.main;
 
 import com.jme3.system.AppSettings;
-import input.ClientInputHandler;
-import main.GameApplication;
 import polarity.client.network.ClientNetwork;
 import polarity.client.screens.MenuScreen;
-import screens.Screen;
-import tools.Sys;
-import tools.Util;
+import polarity.client.world.ClientWorld;
+import polarity.shared.input.ClientInputHandler;
+import polarity.shared.main.GameApplication;
+import polarity.shared.screens.Screen;
+import polarity.shared.tools.Sys;
+import polarity.shared.tools.Util;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -78,6 +79,10 @@ public class GameClient extends GameApplication {
     @Override
     public void initialize() {
         super.initialize();
+
+        // World initialization
+        world = new ClientWorld(50);
+        Sys.setWorld(world);
         
         // Initialize camera
         Util.log("[GameClient] <initialize> Initializing Camera...", 1);
