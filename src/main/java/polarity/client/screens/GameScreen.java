@@ -8,10 +8,10 @@ import com.jme3.scene.Node;
 import polarity.client.hud.advanced.*;
 import polarity.client.main.GameClient;
 import polarity.client.network.ClientNetwork;
+import polarity.client.players.PlayerHandler;
 import polarity.client.world.ClientWorld;
 import polarity.shared.ai.pathfinding.AStarPathFinder;
 import polarity.shared.ai.pathfinding.Path;
-import polarity.shared.character.CharacterManager;
 import polarity.shared.character.Player;
 import polarity.shared.entity.Entity;
 import polarity.shared.files.ChunkFileManager;
@@ -40,7 +40,7 @@ import java.util.concurrent.Callable;
 public class GameScreen extends Screen {
     protected SpellForgeScreen spellForgeScreen;
     protected GameMenu gameMenu;
-    protected CharacterManager charManager;
+    protected PlayerHandler playerHandler;
     
     // HUD Elements
     protected FPSCounter fpsCounter;
@@ -56,23 +56,22 @@ public class GameScreen extends Screen {
     // Movement testing
     protected int playerID;
     
-    public GameScreen(GameClient app, Node rootNode, Node guiNode){
+    public GameScreen(GameClient app, PlayerHandler playerHandler, Node rootNode, Node guiNode){
         super(app, rootNode, guiNode);
+        this.playerHandler = playerHandler;
         gameMenu = new GameMenu(gui, new Vector2f(Sys.width*0.5f, Sys.height*0.5f), 2);
-        charManager = app.getCharManager();
         playerID = ClientNetwork.Instance.getID();
-        charManager.setMyID(playerID);
         name="Game Screen";
     }
     public int getCameraSetting(){
         return (int)cameraHeight/4;
     }
     public Player getPlayer(){
-        return charManager.getPlayer(playerID);
+        return playerHandler.getPlayer(playerID);
     }
     
     public void chatMessage(ChatMessage d){
-        chatBox.addMessage(charManager.getOwner(d.getOwner()).getName()+": "+d.getMessage());
+        chatBox.addMessage(Sys.getNetwork().getOwner(d.getOwner()).getName()+": "+d.getMessage());
     }
     private void updateCamera(){
         Vector2f tempVect = getPlayer().getLocation();

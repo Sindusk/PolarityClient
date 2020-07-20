@@ -18,8 +18,8 @@ import java.util.ArrayList;
  * @author SinisteRing
  */
 public class ChatBox extends HUDElement {
-    protected ArrayList<String> messages = new ArrayList();
-    protected ArrayList<SinText> lines = new ArrayList();
+    protected ArrayList<String> messages = new ArrayList<>();
+    protected ArrayList<SinText> lines = new ArrayList<>();
     protected Vector2f size;
     protected Node lineNode = new Node("lineNode");
     protected Geometry background;

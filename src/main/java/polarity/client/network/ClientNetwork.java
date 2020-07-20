@@ -6,12 +6,12 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.network.*;
 import com.jme3.network.serializing.Serializer;
-import com.jme3.scene.Node;
 import polarity.client.main.GameClient;
+import polarity.client.monsters.MonsterHandler;
+import polarity.client.players.PlayerHandler;
 import polarity.client.screens.GameScreen;
 import polarity.client.screens.MenuScreen;
 import polarity.client.screens.MultiplayerScreen;
-import polarity.shared.character.CharacterManager;
 import polarity.shared.character.LivingCharacter;
 import polarity.shared.character.data.MonsterData;
 import polarity.shared.character.data.PlayerData;
@@ -46,8 +46,7 @@ public class ClientNetwork extends GameNetwork {
     
     // Game variables:
     protected InputHandler inputHandler;
-    protected CharacterManager charManager;
-    protected ServerStatus serverStatus;
+    protected ServerStatusData serverStatus;
     
     // Constants:
     public static final float PING_INTERVAL = 1;
@@ -65,10 +64,10 @@ public class ClientNetwork extends GameNetwork {
     private float[] timers = new float[2];
     private float time;
     
-    public ClientNetwork(GameClient app, Node root, Node gui){
+    public ClientNetwork(GameClient app, PlayerHandler playerHandler, MonsterHandler monsterHandler){
+        super(playerHandler, monsterHandler);
         Util.log("[ClientNetwork] <Initialize> Initializing ClientNetwork...", 2);
         this.app = app;
-        this.charManager = app.getCharManager();
         Instance = this; // Set the ClientNetwork instance.
     }
     
@@ -114,7 +113,7 @@ public class ClientNetwork extends GameNetwork {
         // Send updated movement data:
         if(timers[MOVE] >= MOVE_INTERVAL){
             Util.log("[ClientNetwork] <update> Sending my ("+CLIENT_ID+") movement...", 4);
-            client.send(new MoveData(CLIENT_ID, charManager.getPlayer(CLIENT_ID).getLocation(), inputHandler.getCursorLocWorld()));
+            client.send(new MoveData(CLIENT_ID, playerMediator.getPlayer(CLIENT_ID).getLocation(), inputHandler.getCursorLocWorld()));
             timers[MOVE] = 0;
         }
     }
@@ -181,8 +180,8 @@ public class ClientNetwork extends GameNetwork {
             client.send(d.getPlayerData());
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    charManager.addPlayer(app.getWorld(), d.getPlayerData());
-                    inputHandler.switchScreens(new GameScreen(app, Screen.getTopRoot(), Screen.getTopGUI()));
+                    playerMediator.addPlayer(app.getWorld(), d.getPlayerData());
+                    inputHandler.switchScreens(new GameScreen(app, (PlayerHandler)playerMediator, Screen.getTopRoot(), Screen.getTopGUI()));
                     CLIENT_CONNECTED = true;
                     return null;
                 }
@@ -203,8 +202,8 @@ public class ClientNetwork extends GameNetwork {
             client.send(pd);
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    charManager.addPlayer(app.getWorld(), pd);
-                    inputHandler.switchScreens(new GameScreen(app, Screen.getTopRoot(), Screen.getTopGUI()));
+                    playerMediator.addPlayer(app.getWorld(), pd);
+                    inputHandler.switchScreens(new GameScreen(app, (PlayerHandler)playerMediator, Screen.getTopRoot(), Screen.getTopGUI()));
                     CLIENT_CONNECTED = true;
                     return null;
                 }
@@ -218,7 +217,7 @@ public class ClientNetwork extends GameNetwork {
         private void GeneratorPowerMessage(final GeneratorPowerUpdate d){
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    SpellMatrix matrix = charManager.getPlayer(CLIENT_ID).getMatrix(d.getSlot());
+                    SpellMatrix matrix = playerMediator.getPlayer(CLIENT_ID).getMatrix(d.getSlot());
                     GeneratorData data = (GeneratorData) matrix.getSpellNode(d.getIndex().x, d.getIndex().y).getData();
                     data.setStoredPower(d.getPower());
                     return null;
@@ -229,7 +228,7 @@ public class ClientNetwork extends GameNetwork {
         public void MatrixUpdateMessage(final MatrixUpdate d){
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    charManager.updateMatrix(d);
+                    playerMediator.updateMatrix(d);
                     return null;
                 }
             });
@@ -241,7 +240,7 @@ public class ClientNetwork extends GameNetwork {
         private void MonsterMessage(final MonsterData d){
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    charManager.addMonster(app.getWorld(), d);
+                    monsterMediator.addMonster(app.getWorld(), d);
                     return null;
                 }
             });
@@ -249,7 +248,7 @@ public class ClientNetwork extends GameNetwork {
         private void MonsterStateMessage(final MonsterStateUpdate d){
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    MonsterEntity entity = (MonsterEntity) charManager.getMonster(d.getID()).getEntity();
+                    MonsterEntity entity = (MonsterEntity) monsterMediator.getMonster(d.getID()).getEntity();
                     entity.getNameplate().updateName(d.getStateName());
                     return null;
                 }
@@ -297,7 +296,7 @@ public class ClientNetwork extends GameNetwork {
         private void DamageMessage(final DamageData d){
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    charManager.damage(d);
+                    damage(d);
                     return null;
                 }
             });
@@ -312,7 +311,7 @@ public class ClientNetwork extends GameNetwork {
             Util.log("[ClientNetwork] <DisconnectMessage> Recieving DisconnectMessage...", 1);
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    charManager.removePlayer(d.getID());
+                    playerMediator.removePlayer(d.getID());
                     return null;
                 }
             });
@@ -321,7 +320,7 @@ public class ClientNetwork extends GameNetwork {
         private void HealMessage(final HealData d){
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    charManager.heal(d);
+                    heal(d);
                     return null;
                 }
             });
@@ -337,7 +336,7 @@ public class ClientNetwork extends GameNetwork {
         private void MoveMessage(final MoveData d){
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    charManager.updatePlayerLocation(d);
+                    playerMediator.updateLocation(d);
                     return null;
                 }
             });
@@ -366,7 +365,7 @@ public class ClientNetwork extends GameNetwork {
             }
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    charManager.addPlayer(app.getWorld(), d);
+                    playerMediator.addPlayer(app.getWorld(), d);
                     return null;
                 }
             });
@@ -380,9 +379,9 @@ public class ClientNetwork extends GameNetwork {
          */
         private void ProjectileMessage(final ProjectileData d){
             Util.log("[ClientNetwork] <ProjectileMessage> Recieving new ProjectileMessage...", 2);
-            app.enqueue(new Callable(){
+            app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    app.getWorld().addProjectile(new ProjectileEvent(charManager, d));
+                    app.getWorld().addProjectile(new ProjectileEvent(getOwner(d.getOwner()), d));
                     return null;
                 }
             });
@@ -401,23 +400,23 @@ public class ClientNetwork extends GameNetwork {
                     if(!(inputHandler.getScreen() instanceof MultiplayerScreen)){
                         Util.log("Error 5: Server sent status when multiplayer screen was not open.", 0);
                     }
-                    serverStatus = d.getStatus();
+                    serverStatus = d;
+                    //serverStatus = d.getStatus();
                     return null;
                 }
             });
         }
         
         // Recieved when a sound is played in the server world, and the client needs to know.
-        private void SoundMessage(final SoundData d){
+        private void SoundMessage(final SoundLocationalData d){
             if(d.getID() == CLIENT_ID) {
                 return;
             }
-            final Vector2f loc = charManager.getPlayer(d.getID()).getLocation();
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
                     AudioNode node = new AudioNode(app.getAssetManager(), d.getSound());
                     node.setPositional(true);
-                    node.setLocalTranslation(new Vector3f(loc.x, loc.y, 0));
+                    node.setLocalTranslation(new Vector3f(d.getLoc().x, d.getLoc().y, 0));
                     node.playInstance();
                     return null;
                 }
@@ -427,7 +426,7 @@ public class ClientNetwork extends GameNetwork {
         private void StatusMessage(final StatusData d){
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    ((LivingCharacter)charManager.getOwner(d.getOwner())).applyStatus(d.getStatus());
+                    ((LivingCharacter)getOwner(d.getOwner())).applyStatus(d.getStatus());
                     return null;
                 }
             });
@@ -444,7 +443,7 @@ public class ClientNetwork extends GameNetwork {
         private void DestroyStatus(final DestroyStatusData d){
             app.enqueue(new Callable<Void>(){
                 public Void call() throws Exception{
-                    ((LivingCharacter)charManager.getOwner(d.getOwner())).removeStatus(d.getStatus());
+                    ((LivingCharacter)getOwner(d.getOwner())).removeStatus(d.getStatus());
                     return null;
                 }
             });
@@ -494,8 +493,8 @@ public class ClientNetwork extends GameNetwork {
                 ProjectileMessage((ProjectileData) m);
             }else if(m instanceof ServerStatusData){
                 ServerStatusMessage((ServerStatusData) m);
-            }else if(m instanceof SoundData){
-                SoundMessage((SoundData) m);
+            }else if(m instanceof SoundLocationalData){
+                SoundMessage((SoundLocationalData) m);
             }else if(m instanceof StatusData){
                 StatusMessage((StatusData) m);
             }

@@ -1,10 +1,12 @@
 package polarity.client.main;
 
 import com.jme3.system.AppSettings;
+import polarity.client.input.ClientInputHandler;
+import polarity.client.monsters.MonsterHandler;
 import polarity.client.network.ClientNetwork;
+import polarity.client.players.PlayerHandler;
 import polarity.client.screens.MenuScreen;
 import polarity.client.world.ClientWorld;
-import polarity.shared.input.ClientInputHandler;
 import polarity.shared.main.GameApplication;
 import polarity.shared.screens.Screen;
 import polarity.shared.tools.Sys;
@@ -46,6 +48,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class GameClient extends GameApplication {
     protected static GameClient Instance = null;
+    protected PlayerHandler playerHandler = new PlayerHandler();
+    protected MonsterHandler monsterHandler = new MonsterHandler();
     protected ClientInputHandler inputHandler;
     protected ClientNetwork clientNetwork;
     
@@ -97,7 +101,7 @@ public class GameClient extends GameApplication {
         inputHandler.setupInputs();
         
         // Initialize networking
-        clientNetwork = new ClientNetwork(this, root, gui);
+        clientNetwork = new ClientNetwork(this, playerHandler, monsterHandler);
         clientNetwork.setInputHandler(inputHandler);
         Sys.setNetwork(clientNetwork);
         
